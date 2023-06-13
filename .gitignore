@@ -167,4 +167,7 @@ pretrain/hubert4.0.onnx
 pretrain/vec-256-layer-9.onnx
 pretrain/vec-256-layer-12.onnx
 pretrain/vec-768-layer-9.onnx
+pretrain/nsf_hifigan*
 .vscode/launch.json
+data/
+nohup/

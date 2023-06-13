@@ -9,7 +9,7 @@ services:
       - gid=1001
       - username=mluser
       - project_name=sovitssvc
-    container_name: ml-dev
+    container_name: sovitssvc-dev
     image: sovitssvc-dev-image
     shm_size: '24gb'
     tty: true
@@ -18,10 +18,10 @@ services:
     command: '/bin/bash'
     ports:
       - 16981-16990:16981-16990
-    runtime: nvidia
-    #deploy:
-    #  resources:
-    #    reservations:
-    #      devices:
-    #      - driver: nvidia
-    #        capabilities: [gpu]
+    #runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+          - driver: nvidia
+            capabilities: [gpu]
