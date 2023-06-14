@@ -25,8 +25,9 @@ def main():
     parser.add_argument('-m', '--model_path', type=str, default="logs/44k/G_37600.pth", help='模型路径')
     parser.add_argument('-c', '--config_path', type=str, default="logs/44k/config.json", help='配置文件路径')
     parser.add_argument('-cl', '--clip', type=float, default=0, help='音频强制切片，默认0为自动切片，单位为秒/s')
-    parser.add_argument('-n', '--clean_names', type=str, nargs='+', default=["君の知らない物語-src.wav"], help='wav文件名列表，放在raw文件夹下')
-    parser.add_argument('-t', '--trans', type=int, nargs='+', default=[0], help='音高调整，支持正负（半音）')
+    parser.add_argument('-n', '--input_dir', type=str,  help='wav文件名列表，放在raw文件夹下')
+    parser.add_argument('-o', '--output_dir', type=str,  help='wav文件名列表，放在raw文件夹下')
+    parser.add_argument('-t', '--trans', type=int, default=0, help='音高调整，支持正负（半音）')
     parser.add_argument('-s', '--spk_list', type=str, nargs='+', default=['buyizi'], help='合成目标说话人名称')
     
     # 可选项部分
@@ -59,11 +60,12 @@ def main():
     parser.add_argument('-eak', '--enhancer_adaptive_key', type=int, default=0, help='使增强器适应更高的音域(单位为半音数)|默认为0')
     parser.add_argument('-ft', '--f0_filter_threshold', type=float, default=0.05,help='F0过滤阈值，只有使用crepe时有效. 数值范围从0-1. 降低该值可减少跑调概率，但会增加哑音')
 
-    # python inference_main.py -m ./logs/44k/trained/G_117600.pth -c configs/config.json -t 15 -s jsut -f0p harvest -shd -dm ./logs/44k/diffusion/model_best_200k.pt -dc ./configs/diffusion.yaml -ks 1000 -wf wav -n samples/mso_eq0r_4.wav
+    # python inference_main_dir.py -m ./logs/44k/trained/G_117600.pth -c configs/config.json -s jsut -f0p harvest -shd -dm ./logs/44k/diffusion/model_best_200k.pt -dc ./configs/diffusion.yaml -ks 1000 -wf wav -n ./dataset_raw/jsut -o ./results/jsut1 -t 0 -sd -50
     args = parser.parse_args()
 
-    clean_names = args.clean_names
-    trans = args.trans
+    input_dir = args.input_dir
+    output_dir = args.output_dir
+    tran = args.trans
     spk_list = args.spk_list
     slice_db = args.slice_db
     wav_format = args.wav_format
@@ -99,18 +101,22 @@ def main():
                     use_spk_mix,
                     args.feature_retrieval)
     
-    infer_tool.mkdir(["raw", "results"])
-    
     if len(spk_mix_map)<=1:
         use_spk_mix = False
     if use_spk_mix:
         spk_list = [spk_mix_map]
     
-    infer_tool.fill_a_to_b(trans, clean_names)
-    for clean_name, tran in zip(clean_names, trans):
-        raw_audio_path = f"raw/{clean_name}"
-        if "." not in raw_audio_path:
-            raw_audio_path += ".wav"
+    #infer_tool.fill_a_to_b(trans, clean_names)
+    input_dir = Path(input_dir)
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
+    audio_files = input_dir.glob("*")
+    
+    
+    for raw_audio_path in audio_files:
+        output_path = output_dir / raw_audio_path.name
+        raw_audio_path = str(raw_audio_path)
+        
         infer_tool.format_wav(raw_audio_path)
         for spk in spk_list:
             kwarg = {
@@ -141,7 +147,7 @@ def main():
             if only_diffusion : isdiffusion = "diff"
             if use_spk_mix:
                 spk = "spk_mix"
-            res_path = f'results/{clean_name}_{key}_{spk}{cluster_name}_{isdiffusion}.{wav_format}'
+            res_path = str(output_path)
             soundfile.write(res_path, audio, svc_model.target_sample, format=wav_format)
             svc_model.clear_empty()
             
