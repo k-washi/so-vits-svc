@@ -1,2 +1,2 @@
-./dataset/44k/jsut/BASIC5000_1299.wav
-./dataset/44k/jsut/BASIC5000_2710.wav
+./dataset/44k/noutomi/noutomi1-15_DeepFilterNet3.wav
+./dataset/44k/noutomi/noutomi1-50_DeepFilterNet3.wav

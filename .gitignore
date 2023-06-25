@@ -171,3 +171,4 @@ pretrain/nsf_hifigan*
 .vscode/launch.json
 data/
 nohup/
+_dataset_raw/

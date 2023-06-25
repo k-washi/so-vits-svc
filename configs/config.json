@@ -21,7 +21,7 @@
     "use_sr": true,
     "max_speclen": 512,
     "port": "8001",
-    "keep_ckpts": 0,
+    "keep_ckpts": 3,
     "all_in_mem": false,
     "vol_aug": false
   },
@@ -95,6 +95,6 @@
     "vol_embedding": false
   },
   "spk": {
-    "jsut": 0
+    "noutomi": 0
   }
 }

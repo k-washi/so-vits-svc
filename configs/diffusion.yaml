@@ -27,11 +27,11 @@ model:
   type: Diffusion
   use_pitch_aug: true
 spk:
-  jsut: 0
+  noutomi: 0
 train:
   amp_dtype: fp32
   batch_size: 48
-  cache_all_data: false
+  cache_all_data: true
   cache_device: cpu
   cache_fp16: true
   decay_step: 100000
